@@ -79,7 +79,7 @@ static boolean CheckerDT_treeCheck(Node_T oNNode, size_t *ptrueCount) {
             fprintf(stderr, "Children of array are not properly sorted\n");
             return FALSE;
          } else if(compareResult == 0) {
-            fprintf(stderr, "A node has duplicate child nodes\n"); /*potentially add child nodes here?*/
+            fprintf(stderr, "A node has duplicate child nodes\n");
             return FALSE;
          }
       }
@@ -114,7 +114,7 @@ boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
    /*Root nodes cannot have parents*/
    if(oNRoot != NULL) {
       if(Node_getParent(oNRoot) != NULL) {
-         fprintf(stderr, "Root nodes cannot have parents");
+         fprintf(stderr, "Root nodes cannot have parents\n");
          return FALSE;
       }
    }
@@ -125,7 +125,7 @@ boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
       if(trueCount == ulCount) {
          return TRUE;
       } else {
-         fprintf(stderr, "The number of nodes in the tree is unequal to the reported number");
+         fprintf(stderr, "The number of nodes in the tree is unequal to the reported number\n");
          return FALSE;
       }
    } else {
