@@ -111,11 +111,25 @@ warnings, then write "None."
 
 
 
+
+
 ------------------------------------------------------------------------
 What warnings does critTer generate on checkerDT.c, and what are your
 disagreements with them? Copy the critTer warnings here, and express
 your disagreement after each warning. If there are no warnings, then
 write "None."
+
+checkerDT.c: line 52: medium priority:
+   Do you want to validate 'ptrueCount' through an assert?
+   We don't want to validate ptrueCount through an assert since
+   we're already aware that ptrueCount can't be NULL; we are also 
+   working within a static function that uses ptrueCount.
+
+   checkerDT.c: line 78: low priority:
+   This area is deeply nested at level 4, consider refactoring
+
+   checkerDT.c: line 81: low priority:
+   This area is deeply nested at level 4, consider refactoring
 
 
 
