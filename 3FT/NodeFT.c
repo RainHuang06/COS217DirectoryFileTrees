@@ -81,7 +81,7 @@ int NodeFT_new(Path_T oPPath, Node_T oNParent, boolean isFile, void* pvFile, Nod
    assert(oNParent == NULL);
 
    /* allocate space for a new NodeFT */
-   psNew = malloc(sizeof(struct NodeFT));
+   psNew = malloc(sizeof(struct Node));
    if(psNew == NULL) {
       *poNResult = NULL;
       return MEMORY_ERROR;
