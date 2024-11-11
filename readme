@@ -174,23 +174,9 @@ the error manifests itself or is "noticed" by the client.
 What are your critiques of the given DT implementations, as
 specified in Step 2.5?
 
-NodeDTGood.c has function Node_compareString, which just calls
-Path_compareString, hence a useless, repetitive function
-
-NodeDTGood.c has function Node_getPath, which just returns parameter
-oPath, hence unneeded
-
-NodeDTGood.c has function Node_getNumChildren, which just calls
-DynArray_getLength, hence a useless, repetitive function
-
-NodeDTGood.c's function, Node_getParent, just returns the parent 
-parameter, a parameter needed to initialize the Node, hence 
-unneeded
-
-NodeDTGood.c's function, Node_compare, just calls Path_comparePath,
-hence another useless, repetitive function
-
-dtGood.c has some long functions, could use more comments
-
+DT_FindNode could use more comments
+DT_toString also needs more comments
+DT_contains is not especially useful - DT_FindNode can perform that function
+      
 
 ------------------------------------------------------------------------
