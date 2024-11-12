@@ -580,7 +580,7 @@ char *FT_toString(void) {
    return result;
 }
 
-int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) { /*NOT DONE*/
+int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) { /*NOT DONE?*/
    int status;
    Node_T foundNode = NULL;
    if(!bIsInitialized) {
@@ -594,15 +594,45 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) { /*NOT DONE
       *pbIsFile = FALSE;
       return SUCCESS;
    } else { /*We know that it's a file*/
-
+      *pbIsFile = TRUE;
+      *pulSize = NodeFT_getFileLength(foundNode);
+      return SUCCESS;
    }
 }
 
 void *FT_getFileContents(const char *pcPath) { /*NOT DONE*/
- return NULL;
+   void* contents;
+   Node_T file = NULL;
+   if(!bIsInitialized) {
+      return NULL;
+   }
+   status = FT_findNode(pcPath, file);
+   if(status != SUCCESS) {
+      return NULL;
+   }
+   if(!NodeFT_isFile(file)) {
+      return NULL;
+   } else {
+      return NodeFT_getFileContents(file);
+   }
 }
 
 void *FT_replaceFileContents(const char *pcPath, void *pvNewContents,
                              size_t ulNewLength) { /*NOT DONE*/
-   return NULL;
+   void* oldContents = NULL;
+   Node_T file = NULL;
+   if(!bIsInitialized) {
+      return NULL;
+   }
+   status = FT_findNode(pcPath, file);
+   if(status != SUCCESS) {
+      return NULL;
+   }
+   if(!NodeFT_isFile(file)) {
+      return NULL;
+   } else {
+      oldContents = FT_getFileContents(file);
+      NodeFT_setFile(file, pvNewContents, ulNewLength);
+      return oldContents;
+   }
 }
