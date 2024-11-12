@@ -603,6 +603,7 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) { /*NOT DONE
 void *FT_getFileContents(const char *pcPath) { /*NOT DONE*/
    void* contents;
    Node_T file = NULL;
+   int status;
    if(!bIsInitialized) {
       return NULL;
    }
@@ -621,6 +622,7 @@ void *FT_replaceFileContents(const char *pcPath, void *pvNewContents,
                              size_t ulNewLength) { /*NOT DONE*/
    void* oldContents = NULL;
    Node_T file = NULL;
+   int status;
    if(!bIsInitialized) {
       return NULL;
    }
