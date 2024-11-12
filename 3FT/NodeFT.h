@@ -118,5 +118,21 @@ char *Node_ToString(Node_T oNNodeFT);
 */
 boolean NodeFT_isFile(Node_T oNNodeFT);
 
+/*
+  Returns the contents fo the file
+*/
+void* NodeFT_getFileContents(Node_T oNNodeFT);
+
+/*
+  Returns the length of the node files
+*/
+size_t NodeFT_getFileLength(Node_T oNNodeFT);
+
+/*
+--------
+*/
+int NodeFT_setFile(void* pvContents, size_t ulLength);
+
+
 
 #endif
