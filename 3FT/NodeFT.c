@@ -10,7 +10,7 @@
 #include "NodeFT.h"
 
 /* A NodeFT in a FT */
-struct Node {
+struct NodeFT {
    /* the object corresponding to the NodeFT's absolute path */
    Path_T oPPath;
    /* this NodeFT's parent */
@@ -59,13 +59,13 @@ static int NodeFT_addChild(Node_T oNParent, Node_T oNChild,
   Returns <0, 0, or >0 if oNFirst is "less than", "equal to", or
   "greater than" pcSecond, respectively.
 */
-  /* static int NodeFT_compareString(const Node_T oNFirst,
+   static int NodeFT_compareString(const Node_T oNFirst,
                                  const char *pcSecond) {
    assert(oNFirst != NULL);
    assert(pcSecond != NULL);
 
    return Path_compareString(oNFirst->oPPath, pcSecond); 
-} */
+} 
 
 
 /*
@@ -81,7 +81,7 @@ static int NodeFT_addChild(Node_T oNParent, Node_T oNChild,
 */
 int NodeFT_new(Path_T oPPath, Node_T oNParent, boolean isFile,
  void* pvFile, size_t fileSize, Node_T *poNResult) {
-   struct Node *psNew;
+   struct NodeFT *psNew;
    Path_T oPParentPath = NULL;
    Path_T oPNewPath = NULL;
    size_t ulParentDepth;
@@ -92,7 +92,7 @@ int NodeFT_new(Path_T oPPath, Node_T oNParent, boolean isFile,
    assert(oNParent == NULL);
 
    /* allocate space for a new NodeFT */
-   psNew = malloc(sizeof(struct Node));
+   psNew = malloc(sizeof(struct NodeFT));
    if(psNew == NULL) {
       *poNResult = NULL;
       return MEMORY_ERROR;
@@ -132,7 +132,7 @@ int NodeFT_new(Path_T oPPath, Node_T oNParent, boolean isFile,
       }
 
       /* parent must not already have child with this path */
-      if(NodeFT_hasChild(oNParent, oPPath, &ulIndex)) {
+      if(NodeFT_hasDirectoryChild(oNParent, oPPath, &ulIndex) || NodeFT_hasFileChild(oNParent, oPPath, &ulIndex)) {
          Path_free(psNew->oPPath);
          free(psNew);
          *poNResult = NULL;
@@ -175,6 +175,12 @@ int NodeFT_new(Path_T oPPath, Node_T oNParent, boolean isFile,
    }
    /* Link into parent's children list */
    if(oNParent != NULL) {
+      if(isFile) {
+         (void) (NodeFT_hasFileChild(oNParent, psNew->oPPath, &ulIndex));
+      }
+       else {
+         (void) (NodeFT_hasDirectoryChild(oNParent, psNew->oPPath, &ulIndex));
+      }
       iStatus = NodeFT_addChild(oNParent, psNew, ulIndex);
       if(iStatus != SUCCESS) {
          Path_free(psNew->oPPath);
@@ -249,11 +255,11 @@ size_t NodeFT_free(Node_T oNNodeFT) {
    }
 }
 
-/* Path_T NodeFT_getPath(Node_T oNNodeFT) {
+ Path_T NodeFT_getPath(Node_T oNNodeFT) {
    assert(oNNodeFT != NULL);
 
    return oNNodeFT->oPPath; 
-} */
+} 
 
 boolean NodeFT_hasFileChild(Node_T oNParent, Path_T oPPath,
                          size_t *pulChildID) {
@@ -264,7 +270,7 @@ boolean NodeFT_hasFileChild(Node_T oNParent, Path_T oPPath,
    /* *pulChildID is the index into oNParent->oDChildren */
    return DynArray_bsearch(oNParent->oDFiles,
             (char*) Path_getPathname(oPPath), pulChildID,
-            (int (*)(const void*,const void*)) NodeFT_compare);
+            (int (*)(const void*,const void*)) NodeFT_compareString);
 }
 
 boolean NodeFT_hasDirectoryChild(Node_T oNParent, Path_T oPPath,
@@ -276,15 +282,15 @@ boolean NodeFT_hasDirectoryChild(Node_T oNParent, Path_T oPPath,
    /* *pulChildID is the index into oNParent->oDChildren */
    return DynArray_bsearch(oNParent->oDDirectories,
             (char*) Path_getPathname(oPPath), pulChildID,
-            (int (*)(const void*,const void*)) NodeFT_compare);
+            (int (*)(const void*,const void*)) NodeFT_compareString);
 }
-/* size_t NodeFT_getNumChildren(Node_T oNParent) {
+ size_t NodeFT_getNumChildren(Node_T oNParent) {
    assert(oNParent != NULL);
 
-   return DynArray_getLength(oNParent->oDChildren); 
-} */
+   return DynArray_getLength(oNParent->oDFiles) + DynArray_getLength(oNParent->oDDirectories); 
+}
 
-int  NodeFT_getFile(Node_T oNParent, size_t ulChildID,
+int  NodeFT_getFileChild(Node_T oNParent, size_t ulChildID,
                    Node_T *poNResult) {
 
    assert(oNParent != NULL);
@@ -299,7 +305,7 @@ int  NodeFT_getFile(Node_T oNParent, size_t ulChildID,
       return SUCCESS;
    }
 }
-int  NodeFT_getFile(Node_T oNParent, size_t ulChildID,
+int  NodeFT_getDirectoryChild(Node_T oNParent, size_t ulChildID,
                    Node_T *poNResult) {
 
    assert(oNParent != NULL);
@@ -315,25 +321,25 @@ int  NodeFT_getFile(Node_T oNParent, size_t ulChildID,
    }
 }
 
-/* Node_T NodeFT_getParent(Node_T oNNodeFT) {
+Node_T NodeFT_getParent(Node_T oNNodeFT) {
    assert(oNNodeFT != NULL);
 
    return oNNodeFT->oNParent; 
-} */
+} 
 
 int NodeFT_compare(Node_T oNFirst, Node_T oNSecond) {
    assert(oNFirst != NULL);
    assert(oNSecond != NULL);
 
    return Path_comparePath(oNFirst->oPPath, oNSecond->oPPath);
-} *
+} 
 
 char *Node_ToString(Node_T oNNodeFT) {
    char *copyPath;
 
    assert(oNNodeFT != NULL);
 
-   copyPath = malloc(Path_getStrLength((oNNodeFT->oPPath)+1)); /* plus one indicates pointing to next node, create new node to point oPPath to??? */
+   copyPath = malloc(Path_getStrLength((oNNodeFT->oPPath))+1); /* plus one indicates nullbyte */
    if(copyPath == NULL)
       return NULL;
    else
