@@ -521,7 +521,7 @@ static size_t FT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
          Node_T oNChild = NULL;
          iStatus = NodeFT_getDirectoryChild(n, c, &oNChild);
          assert(iStatus == SUCCESS);
-         FT_preOrderTraversal(oNChild, d, i);
+         i = FT_preOrderTraversal(oNChild, d, i);
       }
    }
    return i;
@@ -584,7 +584,8 @@ char *FT_toString(void) {
 }
 
 int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) { /*NOT DONE*/
-   return 0;
+   
+   
 }
 
 void *FT_getFileContents(const char *pcPath) { /*NOT DONE*/
