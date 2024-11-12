@@ -352,3 +352,16 @@ boolean NodeFT_isFile(Node_T oNNodeFT) {
    assert(oNNodeFT != NULL);
    return oNNodeFT->isFile;
 }
+
+void* NodeFT_getFileContents(Node_T oNNodeFT) {
+
+}
+
+size_t NodeFT_getFileLength(Node_T oNNodeFT) {
+
+}
+
+int NodeFT_setFile(void* pvContents, size_t ulLength) {
+   
+}
+
