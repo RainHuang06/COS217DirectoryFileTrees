@@ -290,9 +290,6 @@ int FT_insertFile(const char *pcPath, void *pvContents,
    Node_T oNCurr = NULL;
    size_t ulDepth, ulIndex;
    size_t ulNewNodes = 0;
-   void* pvFile;
-   size_t filesize = 0;
-   Node_T *poNResult;
 
 
 
@@ -584,8 +581,21 @@ char *FT_toString(void) {
 }
 
 int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) { /*NOT DONE*/
-   
-   
+   int status;
+   Node_T foundNode = NULL;
+   if(!bIsInitialized) {
+      return(INITIALIZATION_ERROR);
+   }
+   status = FT_findNode(pcPath, foundNode);
+   if(status != SUCCESS) {
+      return status;
+   }
+   if(!NodeFT_isFile(foundNode)) {
+      *pbIsFile = FALSE;
+      return SUCCESS;
+   } else { /*We know that it's a file*/
+
+   }
 }
 
 void *FT_getFileContents(const char *pcPath) { /*NOT DONE*/
