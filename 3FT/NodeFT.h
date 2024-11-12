@@ -26,8 +26,8 @@ typedef struct NodeFT *Node_T;
                  or oNParent is NULL but oPPath is not of depth 1
   * ALREADY_IN_TREE if oNParent already has a child with this path
 */
-int NodeFT_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult);
-
+int NodeFT_new(Path_T oPPath, Node_T oNParent, boolean isFile,
+ void* pvFile, size_t fileSize, Node_T *poNResult);
 /*
   Destroys and frees all memory allocated for the subtree rooted at
   oNNodeFT, i.e., deletes this NodeFT and all its descendents. Returns the
@@ -47,11 +47,38 @@ Path_T NodeFT_getPath(Node_T oNNodeFT);
   such a child, stores in *pulChildID the identifier that such a
   child _would_ have if inserted.
 */
-boolean NodeFT_hasChild(Node_T oNParent, Path_T oPPath,
+boolean NodeFT_hasFileChild(Node_T oNParent, Path_T oPPath,
+                         size_t *pulChildID);
+
+/*
+  Returns TRUE if oNParent has a child with path oPPath. Returns
+  FALSE if it does not.
+
+  If oNParent has such a child, stores in *pulChildID the child's
+  identifier (as used in NodeFT_getChild). If oNParent does not have
+  such a child, stores in *pulChildID the identifier that such a
+  child _would_ have if inserted.
+*/
+
+boolean NodeFT_hasDirectoryChild(Node_T oNParent, Path_T oPPath,
                          size_t *pulChildID);
 
 /* Returns the number of children that oNParent has. */
 size_t NodeFT_getNumChildren(Node_T oNParent);
+
+/* Returns the number of children in the directory dynarray */
+size_t NodeFT_getNumDirectoryChildren(Node_T oNParent);
+
+/* Returns the number of children in the file dynArray */
+size_t NodeFT_getNumFileChildren(Node_T oNParent);
+/*
+  Returns an int SUCCESS status and sets *poNResult to be the child
+  NodeFT of oNParent with identifier ulChildID, if one exists.
+  Otherwise, sets *poNResult to NULL and returns status:
+  * NO_SUCH_PATH if ulChildID is not a valid child for oNParent
+*/
+int  NodeFT_getFileChild(Node_T oNParent, size_t ulChildID,
+                   Node_T *poNResult);
 
 /*
   Returns an int SUCCESS status and sets *poNResult to be the child
@@ -59,8 +86,9 @@ size_t NodeFT_getNumChildren(Node_T oNParent);
   Otherwise, sets *poNResult to NULL and returns status:
   * NO_SUCH_PATH if ulChildID is not a valid child for oNParent
 */
-int NodeFT_getChild(Node_T oNParent, size_t ulChildID,
-                  Node_T *poNResult);
+
+int  NodeFT_getDirectoryChild(Node_T oNParent, size_t ulChildID,
+                   Node_T *poNResult);         
 
 /*
   Returns a the parent NodeFT of oNNodeFT.
@@ -83,5 +111,12 @@ int NodeFT_compare(Node_T oNFirst, Node_T oNSecond);
   the caller!
 */
 char *Node_ToString(Node_T oNNodeFT);
+
+/*
+  Returns TRUE or FALSE for if NodeFT oNNodeFT contains a file (TRUE)
+  or a directory (FALSE).
+*/
+boolean NodeFT_isFile(Node_T oNNodeFT);
+
 
 #endif
